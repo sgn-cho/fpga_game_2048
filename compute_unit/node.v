@@ -9,7 +9,7 @@ module node (
     input wire[3:0] value_from_preset,
     output wire[3:0] current_value,
     output wire[3:0] en_to,
-    output reg[3:0] ready_to,
+    output wire[3:0] ready_to,
     output wire[3:0] exist_to
 );
 
@@ -93,7 +93,7 @@ module node (
         end
     end
 
-    // broadcast_en 결정
+    // broadcast_en / preserve 결정
     always @ (current_value or direction or exist_from or neighbor or state) begin
         if (state == ready && // 현재 상태가 ready이며
             ((current_value == 4'b0000 && (direction & exist_from != 4'b0000)) || // 현재 칸이 비어있으며 뒤이은 칸에 블럭이 존재하거나
@@ -112,10 +112,7 @@ module node (
     end
 
     // ready_to 결정
-    always @ (state or direction) begin
-        if (state == ended) ready_to <= direction;
-        else ready_to <= 4'b0000;
-    end
+    assign ready_to = state == ended ? direction : 4'b0000;
 
     // mode 결정
     always @ (state or current_value or neighbor) begin
@@ -124,7 +121,7 @@ module node (
     end
 
     // direction 결정
-    always @ (state or ready_from or direction) begin
+    always @ (posedge clk) begin
         if (state == idle && ready_from != 4'b0000) direction <= ready_from;
         else if (state != idle) direction <= direction;
         else direction <= 4'b0000;
