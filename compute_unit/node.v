@@ -5,7 +5,7 @@ module node (
     input wire[3:0] en_from,
     input wire[3:0] ready_from,
     input wire[3:0] exist_from,
-    input wire[11:0] value_from,
+    input wire[15:0] value_from,
     input wire[3:0] value_from_preset,
     output wire[3:0] current_value,
     output wire[3:0] en_to,
@@ -19,10 +19,11 @@ module node (
     reg mode; // 0이면 preset 설정, 1이면 +1
     reg[3:0] direction; // dataflow 방향 저장
     reg[1:0] state, next_state; // 현재 상태와 이후 상태
+    reg preserve; // 현재 상태 유지
 
     wire[3:0] neighbor; // dataflow 방향에 맞는 인접 value
     wire[3:0] candidate; // enable 신호에 맞는 인접 value
-    wire[3:0] shift_input_value = preset_ext ? value_from_preset : neighbor; // shift register에 들어갈 value
+    wire[3:0] shift_input_value = preset_ext ? value_from_preset : candidate; // shift register에 들어갈 value
 
     // broadcast 설정 시 direction 대로 enable 전송, 그렇지 않다면 en_from 그대로 전송
     assign en_to = broadcast_en ? direction : en_from;
@@ -36,7 +37,7 @@ module node (
         .rst(rst),
         .mode(mode),
         .preset(preset_ext),
-        .en_from(en_from),
+        .en_from(en_to && ~preserve),
         .value_from(shift_input_value),
         .current_value(current_value)
     );
@@ -72,10 +73,12 @@ module node (
             end
         end
         else if (state == ready) begin
-            if (current_value == 4'b0000 && (direction & exist_from) != 4'b0000) begin // 현재 칸이 비어있고 남은 칸이 비어있지 않다면
+            if (current_value == 4'b0000 && (direction & exist_from) != 4'b0000) begin // 현재 칸이 비어있고 남은 칸이 비어있지 않은 경우
                 next_state <= pending;
             end
-            else if (current_value == neighbor) begin // 현재 칸과 옆 칸의 값이 동일할 경우
+            else if (current_value != 4'b0000 && current_value == neighbor) begin // 현재 칸과 옆 칸의 값이 동일할 경우
+                next_state <= ended;
+            end else if ((neighbor == 4'b0000 && (direction & exist_from) != 4'b0000)) begin // 옆 칸이 비고 dataflow에 블럭이 존재하는 경우
                 next_state <= pending;
             end
             else begin // 밀리지 않는 경우
@@ -94,10 +97,18 @@ module node (
     always @ (current_value or direction or exist_from or neighbor or state) begin
         if (state == ready && // 현재 상태가 ready이며
             ((current_value == 4'b0000 && (direction & exist_from != 4'b0000)) || // 현재 칸이 비어있으며 뒤이은 칸에 블럭이 존재하거나
-            (current_value == neighbor))) begin // 현재 칸의 값이 이웃한 칸의 값과 같다면
+            (current_value != 4'b0000 && current_value == neighbor))) begin // 현재 칸의 값이 이웃한 칸의 값과 같거나
                 broadcast_en <= 1'b1; // enable 신호를 broadcast
+                preserve <= 1'b0;
         end
-        else broadcast_en <= 1'b0;
+        else if (state == ready && (neighbor == 4'b0000 && (direction & exist_from) != 4'b0000)) begin // 옆 칸이 비어있고 dataflow에 블럭이 존재한다면
+            broadcast_en <= 1'b1;
+            preserve <= 1'b1;
+        end
+        else begin
+            broadcast_en <= 1'b0;
+            preserve <= 1'b0;
+        end
     end
 
     // ready_to 결정
