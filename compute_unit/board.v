@@ -238,7 +238,7 @@ module board (
         .preset_ext(preset_ext && preset_decode[7]),
         .en_from({node_3_en[3], 1'b0, node_11_en[1], node_6_en[0]}),
         .ready_from({node_3_ready[3], ready_from_global[2], node_11_ready[1], node_6_ready[0]}),
-        .exist_from({node_11_exist[3], node_6_ready[2], node_3_exist[1], 1'b0}),
+        .exist_from({node_11_exist[3], node_6_exist[2], node_3_exist[1], 1'b0}),
         .value_from({node_11_value, node_6_value, node_3_value, 4'b0000}),
         .value_from_preset(value_from_preset),
         .current_value(node_7_value),
