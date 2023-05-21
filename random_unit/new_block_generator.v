@@ -34,7 +34,7 @@ module new_block_generator(
         (num == 4'he) ? tmp_position << 14 : tmp_position << 15);
 
     always @ (posedge clk) begin
-        if (in == 1'b1) begin
+        if (muxed_value == 1'b1) begin
             done <= 1'b1;
         end
         out <= num;
