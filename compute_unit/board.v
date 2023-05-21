@@ -7,7 +7,8 @@ module board (
     input wire[3:0] ready_from_global,
     output wire[63:0] total_current_state,
     output reg[3:0] board_done,
-    output wire movable
+    output wire movable,
+    output wire[15:0] score
 );
 
     // preset location decoder
@@ -33,98 +34,118 @@ module board (
     wire[3:0] node_15_exist;
     wire[3:0] node_15_ready;
     wire node_15_movable;
+    wire node_15_score;
 
     wire[3:0] node_14_value;
     wire[3:0] node_14_en;
     wire[3:0] node_14_exist;
     wire[3:0] node_14_ready;
     wire node_14_movable;
+    wire node_14_score;
 
     wire[3:0] node_13_value;
     wire[3:0] node_13_en;
     wire[3:0] node_13_exist;
     wire[3:0] node_13_ready;
     wire node_13_movable;
+    wire node_13_score;
 
     wire[3:0] node_12_value;
     wire[3:0] node_12_en;
     wire[3:0] node_12_exist;
     wire[3:0] node_12_ready;
     wire node_12_movable;
+    wire node_12_score;
 
     wire[3:0] node_11_value;
     wire[3:0] node_11_en;
     wire[3:0] node_11_exist;
     wire[3:0] node_11_ready;
     wire node_11_movable;
+    wire node_11_score;
 
     wire[3:0] node_10_value;
     wire[3:0] node_10_en;
     wire[3:0] node_10_exist;
     wire[3:0] node_10_ready;
     wire node_10_movable;
+    wire node_10_score;
 
     wire[3:0] node_9_value;
     wire[3:0] node_9_en;
     wire[3:0] node_9_exist;
     wire[3:0] node_9_ready;
     wire node_9_movable;
+    wire node_9_score;
 
     wire[3:0] node_8_value;
     wire[3:0] node_8_en;
     wire[3:0] node_8_exist;
     wire[3:0] node_8_ready;
     wire node_8_movable;
+    wire node_8_score;
 
     wire[3:0] node_7_value;
     wire[3:0] node_7_en;
     wire[3:0] node_7_exist;
     wire[3:0] node_7_ready;
     wire node_7_movable;
+    wire node_7_score;
 
     wire[3:0] node_6_value;
     wire[3:0] node_6_en;
     wire[3:0] node_6_exist;
     wire[3:0] node_6_ready;
     wire node_6_movable;
+    wire node_6_score;
 
     wire[3:0] node_5_value;
     wire[3:0] node_5_en;
     wire[3:0] node_5_exist;
     wire[3:0] node_5_ready;
     wire node_5_movable;
+    wire node_5_score;
 
     wire[3:0] node_4_value;
     wire[3:0] node_4_en;
     wire[3:0] node_4_exist;
     wire[3:0] node_4_ready;
     wire node_4_movable;
+    wire node_4_score;
 
     wire[3:0] node_3_value;
     wire[3:0] node_3_en;
     wire[3:0] node_3_exist;
     wire[3:0] node_3_ready;
     wire node_3_movable;
+    wire node_3_score;
 
     wire[3:0] node_2_value;
     wire[3:0] node_2_en;
     wire[3:0] node_2_exist;
     wire[3:0] node_2_ready;
     wire node_2_movable;
+    wire node_2_score;
 
     wire[3:0] node_1_value;
     wire[3:0] node_1_en;
     wire[3:0] node_1_exist;
     wire[3:0] node_1_ready;
     wire node_1_movable;
+    wire node_1_score;
 
     wire[3:0] node_0_value;
     wire[3:0] node_0_en;
     wire[3:0] node_0_exist;
     wire[3:0] node_0_ready;
     wire node_0_movable;
+    wire node_0_score;
 
-    // test assign
+    assign score = {node_15_score, node_14_score, node_13_score, node_12_score,
+        node_11_score, node_10_score, node_9_score, node_8_score,
+        node_7_score, node_6_score, node_5_score, node_4_score,
+        node_3_score, node_2_score, node_1_score, node_0_score};
+
     assign total_current_state = {node_15_value, node_14_value, node_13_value, node_12_value,
         node_11_value, node_10_value, node_9_value, node_8_value,
         node_7_value, node_6_value, node_5_value, node_4_value,
@@ -175,7 +196,8 @@ module board (
         .en_to(node_15_en),
         .ready_to(node_15_ready),
         .exist_to(node_15_exist),
-        .movable(node_15_movable)
+        .movable(node_15_movable),
+        .score(node_15_score)
     );
 
     node node_14(
@@ -191,7 +213,8 @@ module board (
         .en_to(node_14_en),
         .ready_to(node_14_ready),
         .exist_to(node_14_exist),
-        .movable(node_14_movable)
+        .movable(node_14_movable),
+        .score(node_14_score)
     );
 
     node node_13(
@@ -207,7 +230,8 @@ module board (
         .en_to(node_13_en),
         .ready_to(node_13_ready),
         .exist_to(node_13_exist),
-        .movable(node_13_movable)
+        .movable(node_13_movable),
+        .score(node_13_score)
     );
 
     node node_12(
@@ -223,7 +247,8 @@ module board (
         .en_to(node_12_en),
         .ready_to(node_12_ready),
         .exist_to(node_12_exist),
-        .movable(node_12_movable)
+        .movable(node_12_movable),
+        .score(node_12_score)
     );
 
     node node_11(
@@ -239,7 +264,8 @@ module board (
         .en_to(node_11_en),
         .ready_to(node_11_ready),
         .exist_to(node_11_exist),
-        .movable(node_11_movable)
+        .movable(node_11_movable),
+        .score(node_11_score)
     );
 
     node node_10(
@@ -255,7 +281,8 @@ module board (
         .en_to(node_10_en),
         .ready_to(node_10_ready),
         .exist_to(node_10_exist),
-        .movable(node_10_movable)
+        .movable(node_10_movable),
+        .score(node_10_score)
     );
 
     node node_9(
@@ -271,7 +298,8 @@ module board (
         .en_to(node_9_en),
         .ready_to(node_9_ready),
         .exist_to(node_9_exist),
-        .movable(node_9_movable)
+        .movable(node_9_movable),
+        .score(node_9_score)
     );
 
     node node_8(
@@ -287,7 +315,8 @@ module board (
         .en_to(node_8_en),
         .ready_to(node_8_ready),
         .exist_to(node_8_exist),
-        .movable(node_8_movable)
+        .movable(node_8_movable),
+        .score(node_8_score)
     );
 
     node node_7(
@@ -303,7 +332,8 @@ module board (
         .en_to(node_7_en),
         .ready_to(node_7_ready),
         .exist_to(node_7_exist),
-        .movable(node_7_movable)
+        .movable(node_7_movable),
+        .score(node_7_score)
     );
 
     node node_6(
@@ -319,7 +349,8 @@ module board (
         .en_to(node_6_en),
         .ready_to(node_6_ready),
         .exist_to(node_6_exist),
-        .movable(node_6_movable)
+        .movable(node_6_movable),
+        .score(node_6_score)
     );
 
     node node_5(
@@ -335,7 +366,8 @@ module board (
         .en_to(node_5_en),
         .ready_to(node_5_ready),
         .exist_to(node_5_exist),
-        .movable(node_5_movable)
+        .movable(node_5_movable),
+        .score(node_5_score)
     );
 
     node node_4(
@@ -351,7 +383,8 @@ module board (
         .en_to(node_4_en),
         .ready_to(node_4_ready),
         .exist_to(node_4_exist),
-        .movable(node_4_movable)
+        .movable(node_4_movable),
+        .score(node_4_score)
     );
 
     node node_3(
@@ -367,7 +400,8 @@ module board (
         .en_to(node_3_en),
         .ready_to(node_3_ready),
         .exist_to(node_3_exist),
-        .movable(node_3_movable)
+        .movable(node_3_movable),
+        .score(node_3_score)
     );
 
     node node_2(
@@ -383,7 +417,8 @@ module board (
         .en_to(node_2_en),
         .ready_to(node_2_ready),
         .exist_to(node_2_exist),
-        .movable(node_2_movable)
+        .movable(node_2_movable),
+        .score(node_2_score)
     );
 
     node node_1(
@@ -399,7 +434,8 @@ module board (
         .en_to(node_1_en),
         .ready_to(node_1_ready),
         .exist_to(node_1_exist),
-        .movable(node_1_movable)
+        .movable(node_1_movable),
+        .score(node_1_score)
     );
 
     node node_0(
@@ -415,7 +451,8 @@ module board (
         .en_to(node_0_en),
         .ready_to(node_0_ready),
         .exist_to(node_0_exist),
-        .movable(node_0_movable)
+        .movable(node_0_movable),
+        .score(node_0_score)
     );
     
 endmodule
