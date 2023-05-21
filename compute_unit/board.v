@@ -5,7 +5,9 @@ module board (
     input wire[3:0] preset_location,
     input wire[3:0] value_from_preset,
     input wire[3:0] ready_from_global,
-    output wire[63:0] total_current_state
+    output wire[63:0] total_current_state,
+    output reg[3:0] board_done,
+    output wire movable
 );
 
     // preset location decoder
@@ -30,87 +32,135 @@ module board (
     wire[3:0] node_15_en;
     wire[3:0] node_15_exist;
     wire[3:0] node_15_ready;
+    wire node_15_movable;
 
     wire[3:0] node_14_value;
     wire[3:0] node_14_en;
     wire[3:0] node_14_exist;
     wire[3:0] node_14_ready;
+    wire node_14_movable;
 
     wire[3:0] node_13_value;
     wire[3:0] node_13_en;
     wire[3:0] node_13_exist;
     wire[3:0] node_13_ready;
+    wire node_13_movable;
 
     wire[3:0] node_12_value;
     wire[3:0] node_12_en;
     wire[3:0] node_12_exist;
     wire[3:0] node_12_ready;
+    wire node_12_movable;
 
     wire[3:0] node_11_value;
     wire[3:0] node_11_en;
     wire[3:0] node_11_exist;
     wire[3:0] node_11_ready;
+    wire node_11_movable;
 
     wire[3:0] node_10_value;
     wire[3:0] node_10_en;
     wire[3:0] node_10_exist;
     wire[3:0] node_10_ready;
+    wire node_10_movable;
 
     wire[3:0] node_9_value;
     wire[3:0] node_9_en;
     wire[3:0] node_9_exist;
     wire[3:0] node_9_ready;
+    wire node_9_movable;
 
     wire[3:0] node_8_value;
     wire[3:0] node_8_en;
     wire[3:0] node_8_exist;
     wire[3:0] node_8_ready;
+    wire node_8_movable;
 
     wire[3:0] node_7_value;
     wire[3:0] node_7_en;
     wire[3:0] node_7_exist;
     wire[3:0] node_7_ready;
+    wire node_7_movable;
 
     wire[3:0] node_6_value;
     wire[3:0] node_6_en;
     wire[3:0] node_6_exist;
     wire[3:0] node_6_ready;
+    wire node_6_movable;
 
     wire[3:0] node_5_value;
     wire[3:0] node_5_en;
     wire[3:0] node_5_exist;
     wire[3:0] node_5_ready;
+    wire node_5_movable;
 
     wire[3:0] node_4_value;
     wire[3:0] node_4_en;
     wire[3:0] node_4_exist;
     wire[3:0] node_4_ready;
+    wire node_4_movable;
 
     wire[3:0] node_3_value;
     wire[3:0] node_3_en;
     wire[3:0] node_3_exist;
     wire[3:0] node_3_ready;
+    wire node_3_movable;
 
     wire[3:0] node_2_value;
     wire[3:0] node_2_en;
     wire[3:0] node_2_exist;
     wire[3:0] node_2_ready;
+    wire node_2_movable;
 
     wire[3:0] node_1_value;
     wire[3:0] node_1_en;
     wire[3:0] node_1_exist;
     wire[3:0] node_1_ready;
+    wire node_1_movable;
 
     wire[3:0] node_0_value;
     wire[3:0] node_0_en;
     wire[3:0] node_0_exist;
     wire[3:0] node_0_ready;
+    wire node_0_movable;
 
     // test assign
     assign total_current_state = {node_15_value, node_14_value, node_13_value, node_12_value,
         node_11_value, node_10_value, node_9_value, node_8_value,
         node_7_value, node_6_value, node_5_value, node_4_value,
         node_3_value, node_2_value, node_1_value, node_0_value};
+
+    reg[11:0] board_done_checker;
+
+    always @ (posedge clk) begin
+        if (rst == 1'b0) begin
+            board_done_checker <= 16'h0000;
+            board_done <= 4'h0;
+        end
+        else if (board_done_checker[15:12] == 4'b1111) begin
+            board_done_checker[15:12] <= 4'b0000;
+            board_done[3] <= 1'b1;
+        end
+        else if (board_done_checker[11:8] == 4'b1111) begin
+            board_done_checker[11:8] <= 4'b0000;
+            board_done[2] <= 1'b1;
+        end
+        else if (board_done_chekcer[7:4] == 4'b1111) begin
+            board_done_checker[7:4] <= 4'b0000;
+            board_done[1] <= 1'b1;
+        end
+        else if (board_done_checker[3:0] == 4'b1111) begin
+            board_done_checker[3:0] <= 4'b0000;
+            board_done[0] <= 1'b1;
+        end
+        else begin
+            board_done_checker[15:12] <= {node_15_ready, node_14_ready, node_13_ready, node_12_ready} | board_done_checker[15:12];
+            board_done_checker[11:8] <= {node_12_ready, node_8_ready, node_4_ready, node_0_ready} | board_done_checker[11:8];
+            board_done_checker[7:4] <= {node_3_ready, node_2_ready, node_1_ready, node_0_ready} | board_done_checker[7:4];
+            board_done_checker[3:0] <= {node_15_ready, node_11_ready, node_7_ready, node_3_ready} | board_done_checker[3:0];
+            board_done <= 4'h0;
+        end
+    end
 
     node node_15(
         .clk(clk),
@@ -124,7 +174,8 @@ module board (
         .current_value(node_15_value),
         .en_to(node_15_en),
         .ready_to(node_15_ready),
-        .exist_to(node_15_exist)
+        .exist_to(node_15_exist),
+        .movable(node_15_movable)
     );
 
     node node_14(
@@ -139,7 +190,8 @@ module board (
         .current_value(node_14_value),
         .en_to(node_14_en),
         .ready_to(node_14_ready),
-        .exist_to(node_14_exist)
+        .exist_to(node_14_exist),
+        .movable(node_14_movable)
     );
 
     node node_13(
@@ -154,7 +206,8 @@ module board (
         .current_value(node_13_value),
         .en_to(node_13_en),
         .ready_to(node_13_ready),
-        .exist_to(node_13_exist)
+        .exist_to(node_13_exist),
+        .movable(node_13_movable)
     );
 
     node node_12(
@@ -169,7 +222,8 @@ module board (
         .current_value(node_12_value),
         .en_to(node_12_en),
         .ready_to(node_12_ready),
-        .exist_to(node_12_exist)
+        .exist_to(node_12_exist),
+        .movable(node_12_movable)
     );
 
     node node_11(
@@ -184,7 +238,8 @@ module board (
         .current_value(node_11_value),
         .en_to(node_11_en),
         .ready_to(node_11_ready),
-        .exist_to(node_11_exist)
+        .exist_to(node_11_exist),
+        .movable(node_11_movable)
     );
 
     node node_10(
@@ -199,7 +254,8 @@ module board (
         .current_value(node_10_value),
         .en_to(node_10_en),
         .ready_to(node_10_ready),
-        .exist_to(node_10_exist)
+        .exist_to(node_10_exist),
+        .movable(node_10_movable)
     );
 
     node node_9(
@@ -214,7 +270,8 @@ module board (
         .current_value(node_9_value),
         .en_to(node_9_en),
         .ready_to(node_9_ready),
-        .exist_to(node_9_exist)
+        .exist_to(node_9_exist),
+        .movable(node_9_movable)
     );
 
     node node_8(
@@ -229,7 +286,8 @@ module board (
         .current_value(node_8_value),
         .en_to(node_8_en),
         .ready_to(node_8_ready),
-        .exist_to(node_8_exist)
+        .exist_to(node_8_exist),
+        .movable(node_8_movable)
     );
 
     node node_7(
@@ -244,7 +302,8 @@ module board (
         .current_value(node_7_value),
         .en_to(node_7_en),
         .ready_to(node_7_ready),
-        .exist_to(node_7_exist)
+        .exist_to(node_7_exist),
+        .movable(node_7_movable)
     );
 
     node node_6(
@@ -259,7 +318,8 @@ module board (
         .current_value(node_6_value),
         .en_to(node_6_en),
         .ready_to(node_6_ready),
-        .exist_to(node_6_exist)
+        .exist_to(node_6_exist),
+        .movable(node_6_movable)
     );
 
     node node_5(
@@ -274,7 +334,8 @@ module board (
         .current_value(node_5_value),
         .en_to(node_5_en),
         .ready_to(node_5_ready),
-        .exist_to(node_5_exist)
+        .exist_to(node_5_exist),
+        .movable(node_5_movable)
     );
 
     node node_4(
@@ -289,7 +350,8 @@ module board (
         .current_value(node_4_value),
         .en_to(node_4_en),
         .ready_to(node_4_ready),
-        .exist_to(node_4_exist)
+        .exist_to(node_4_exist),
+        .movable(node_4_movable)
     );
 
     node node_3(
@@ -304,7 +366,8 @@ module board (
         .current_value(node_3_value),
         .en_to(node_3_en),
         .ready_to(node_3_ready),
-        .exist_to(node_3_exist)
+        .exist_to(node_3_exist),
+        .movable(node_3_movable)
     );
 
     node node_2(
@@ -319,7 +382,8 @@ module board (
         .current_value(node_2_value),
         .en_to(node_2_en),
         .ready_to(node_2_ready),
-        .exist_to(node_2_exist)
+        .exist_to(node_2_exist),
+        .movable(node_2_movable)
     );
 
     node node_1(
@@ -334,7 +398,8 @@ module board (
         .current_value(node_1_value),
         .en_to(node_1_en),
         .ready_to(node_1_ready),
-        .exist_to(node_1_exist)
+        .exist_to(node_1_exist),
+        .movable(node_1_movable)
     );
 
     node node_0(
@@ -349,7 +414,8 @@ module board (
         .current_value(node_0_value),
         .en_to(node_0_en),
         .ready_to(node_0_ready),
-        .exist_to(node_0_exist)
+        .exist_to(node_0_exist),
+        .movable(node_0_movable)
     );
     
 endmodule
