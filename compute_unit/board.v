@@ -5,7 +5,7 @@ module board (
     input wire[3:0] preset_location,
     input wire[3:0] value_from_preset,
     input wire[3:0] ready_from_global,
-    output wire[3:0] done
+    output wire[63:0] total_current_state
 );
 
     // preset location decoder
@@ -107,7 +107,10 @@ module board (
     wire[3:0] node_0_ready;
 
     // test assign
-    assign done = node_11_value;
+    assign total_current_state = {node_15_value, node_14_value, node_13_value, node_12_value,
+        node_11_value, node_10_value, node_9_value, node_8_value,
+        node_7_value, node_6_value, node_5_value, node_4_value,
+        node_3_value, node_2_value, node_1_value, node_0_value};
 
     node node_15(
         .clk(clk),
@@ -189,9 +192,9 @@ module board (
         .rst(rst),
         .preset_ext(preset_ext && preset_decode[10]),
         .en_from({node_6_en[3], node_11_en[2], node_14_en[1], node_9_en[0]}),
-        .ready_from({node_6_ready[3], node_11_ready[2], node_13_ready[1], node_9_en[0]}),
-        .exist_from({node_13_exist[3], node_9_exist[2], node_6_exist[1], node_11_exist[0]}),
-        .value_from({node_13_value, node_9_value, node_6_value, node_11_value}),
+        .ready_from({node_6_ready[3], node_11_ready[2], node_14_ready[1], node_9_ready[0]}),
+        .exist_from({node_14_exist[3], node_9_exist[2], node_6_exist[1], node_11_exist[0]}),
+        .value_from({node_14_value, node_9_value, node_6_value, node_11_value}),
         .value_from_preset(value_from_preset),
         .current_value(node_10_value),
         .en_to(node_10_en),
@@ -204,9 +207,9 @@ module board (
         .rst(rst),
         .preset_ext(preset_ext && preset_decode[9]),
         .en_from({node_5_en[3], node_10_en[2], node_13_en[1], node_8_en[0]}),
-        .ready_from({node_5_ready[3], node_10_ready[2], node_12_ready[1], node_8_ready[0]}),
-        .exist_from({node_12_exist[3], node_8_exist[2], node_5_exist[1], node_10_exist[0]}),
-        .value_from({node_12_value, node_8_value, node_5_value, node_10_exist}),
+        .ready_from({node_5_ready[3], node_10_ready[2], node_13_ready[1], node_8_ready[0]}),
+        .exist_from({node_13_exist[3], node_8_exist[2], node_5_exist[1], node_10_exist[0]}),
+        .value_from({node_13_value, node_8_value, node_5_value, node_10_value}),
         .value_from_preset(value_from_preset),
         .current_value(node_9_value),
         .en_to(node_9_en),
@@ -262,7 +265,7 @@ module board (
     node node_5(
         .clk(clk),
         .rst(rst),
-        .preset_ext(preset_ext && tmp_preset[5]),
+        .preset_ext(preset_ext && preset_decode[5]),
         .en_from({node_1_en[3], node_6_en[2], node_9_en[1], node_4_en[0]}),
         .ready_from({node_1_ready[3], node_6_ready[2], node_9_ready[1], node_4_ready[0]}),
         .exist_from({node_9_exist[3], node_4_exist[2], node_1_exist[1], node_6_exist[0]}),
@@ -277,7 +280,7 @@ module board (
     node node_4(
         .clk(clk),
         .rst(rst),
-        .preset_ext(preset_ext && tmp_preset[4]),
+        .preset_ext(preset_ext && preset_decode[4]),
         .en_from({node_0_en[3], node_5_en[2], node_8_en[1], 1'b0}),
         .ready_from({node_0_ready[3], node_5_ready[2], node_8_ready[1], ready_from_global[0]}),
         .exist_from({node_8_exist[3], 1'b0, node_0_exist[1], node_5_exist[0]}),
@@ -292,7 +295,7 @@ module board (
     node node_3(
         .clk(clk),
         .rst(rst),
-        .preset_ext(preset_ext && tmp_preset[3]),
+        .preset_ext(preset_ext && preset_decode[3]),
         .en_from({2'b00, node_7_en[1], node_2_en[0]}),
         .ready_from({ready_from_global[3:2], node_7_ready[1], node_2_ready[0]}),
         .exist_from({node_7_exist[3], node_2_exist[2], 2'b00}),
@@ -307,7 +310,7 @@ module board (
     node node_2(
         .clk(clk),
         .rst(rst),
-        .preset_ext(preset_ext && tmp_preset[2]),
+        .preset_ext(preset_ext && preset_decode[2]),
         .en_from({1'b0, node_3_en[2], node_6_en[1], node_1_en[0]}),
         .ready_from({ready_from_global[3], node_3_ready[2], node_6_ready[1], node_1_ready[0]}),
         .exist_from({node_6_exist[3], node_1_exist[2], 1'b0, node_3_exist[0]}),
@@ -322,7 +325,7 @@ module board (
     node node_1(
         .clk(clk),
         .rst(rst),
-        .preset_ext(preset_ext && tmp_preset[1]),
+        .preset_ext(preset_ext && preset_decode[1]),
         .en_from({1'b0, node_2_en[2], node_5_en[1], node_0_en[0]}),
         .ready_from({ready_from_global[3], node_2_ready[2], node_5_ready[1], node_0_ready[0]}),
         .exist_from({node_5_exist[3], node_0_exist[2], 1'b0, node_2_exist[0]}),
@@ -337,7 +340,7 @@ module board (
     node node_0(
         .clk(clk),
         .rst(rst),
-        .preset_ext(preset_ext && tmp_preset[0]),
+        .preset_ext(preset_ext && preset_decode[0]),
         .en_from({1'b0, node_1_en[2], node_4_en[1], 1'b0}),
         .ready_from({ready_from_global[3], node_1_ready[2], node_4_ready[1], ready_from_global[0]}),
         .exist_from({node_4_exist[3], 2'b00, node_1_exist[0]}),

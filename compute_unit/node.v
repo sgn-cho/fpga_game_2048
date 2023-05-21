@@ -37,7 +37,7 @@ module node (
         .rst(rst),
         .mode(mode),
         .preset(preset_ext),
-        .en_from(en_to && ~preserve),
+        .en_from(en_to & {~preserve, ~preserve, ~preserve, ~preserve}),
         .value_from(shift_input_value),
         .current_value(current_value)
     );
@@ -95,11 +95,13 @@ module node (
 
     // broadcast_en / preserve 결정
     always @ (current_value or direction or exist_from or neighbor or state) begin
-        if (state == ready && // 현재 상태가 ready이며
-            ((current_value == 4'b0000 && (direction & exist_from != 4'b0000)) || // 현재 칸이 비어있으며 뒤이은 칸에 블럭이 존재하거나
-            (current_value != 4'b0000 && current_value == neighbor))) begin // 현재 칸의 값이 이웃한 칸의 값과 같거나
+        if (state == ready && current_value == 4'b0000 && (direction & exist_from) != 4'b0000) begin // 현재 칸이 비어있으며 뒤이은 칸에 블럭이 존재하거나
                 broadcast_en <= 1'b1; // enable 신호를 broadcast
                 preserve <= 1'b0;
+        end
+        else if (state == ready && (current_value != 4'b0000 && current_value == neighbor)) begin // 현재 칸의 값이 이웃한 칸의 값과 같거나
+            broadcast_en <= 1'b1;
+            preserve <= 1'b0;
         end
         else if (state == ready && (neighbor == 4'b0000 && (direction & exist_from) != 4'b0000)) begin // 옆 칸이 비어있고 dataflow에 블럭이 존재한다면
             broadcast_en <= 1'b1;
@@ -116,7 +118,7 @@ module node (
 
     // mode 결정
     always @ (state or current_value or neighbor) begin
-        if (state == ready && current_value == neighbor) mode <= 1'b1;
+        if (state == ready && current_value == neighbor && current_value != 4'b0000) mode <= 1'b1;
         else mode <= 1'b0;
     end
 
