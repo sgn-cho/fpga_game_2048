@@ -12,14 +12,13 @@ module node (
     output wire[3:0] ready_to,
     output wire[3:0] exist_to,
     output wire movable,
-    output wire score
+    output reg score
 );
 
     parameter idle = 0, ready = 1, pending = 2, ended = 3;
 
     reg broadcast_en; // en_from을 그대로 넘길지 현재 node에서 en 신호를 broacast할지 결정
     reg mode; // 0이면 preset 설정, 1이면 +1
-    reg score; // score reg가 1이라면 현재 값을 점수로 저장
     reg[3:0] direction; // dataflow 방향 저장
     reg[1:0] state, next_state; // 현재 상태와 이후 상태
     reg preserve; // 현재 상태 유지

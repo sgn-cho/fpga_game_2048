@@ -151,7 +151,7 @@ module board (
         node_7_value, node_6_value, node_5_value, node_4_value,
         node_3_value, node_2_value, node_1_value, node_0_value};
 
-    reg[11:0] board_done_checker;
+    reg[15:0] board_done_checker;
 
     always @ (posedge clk) begin
         if (rst == 1'b0) begin
@@ -166,7 +166,7 @@ module board (
             board_done_checker[11:8] <= 4'b0000;
             board_done[2] <= 1'b1;
         end
-        else if (board_done_chekcer[7:4] == 4'b1111) begin
+        else if (board_done_checker[7:4] == 4'b1111) begin
             board_done_checker[7:4] <= 4'b0000;
             board_done[1] <= 1'b1;
         end
@@ -342,7 +342,7 @@ module board (
         .preset_ext(preset_ext && preset_decode[6]),
         .en_from({node_2_en[3], node_7_en[2], node_10_en[1], node_5_en[0]}),
         .ready_from({node_2_ready[3], node_7_ready[2], node_10_ready[1], node_5_ready[0]}),
-        .exist_from({node_11_exist[3], node_5_exist[2], node_2_exist[1], node_7_exist[0]}),
+        .exist_from({node_10_exist[3], node_5_exist[2], node_2_exist[1], node_7_exist[0]}),
         .value_from({node_10_value, node_5_value, node_2_value, node_7_value}),
         .value_from_preset(value_from_preset),
         .current_value(node_6_value),
