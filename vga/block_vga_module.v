@@ -105,7 +105,7 @@ module block_vga_module (
             vga_data <= 12'd0;
         end
         else if (v_cnt >= 12'd60 && v_cnt < 12'd92) begin
-            vga_data <= vga_font_output[h_cnt_offset] == 1'b1 ? font_color : background_color;
+            vga_data <= vga_font_output[5'd15 - h_cnt_offset] == 1'b1 ? font_color : background_color;
         end else begin
             vga_data <= background_color;
         end
