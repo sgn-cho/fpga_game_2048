@@ -7,6 +7,15 @@ module block_vga_module (
     output reg[11:0] vga_data
 );
 
+    parameter v_letter_start_offset = 12'd60;
+    parameter v_letter_end_offset = 12'd106;
+
+    parameter h_letter_first_offset = 12'd41;
+    parameter h_letter_second_offset = 12'd58;
+    parameter h_letter_third_offset = 12'd74;
+    parameter h_letter_last_offset = 12'd90;
+    parameter h_end_offset = 12'd106;
+
     wire[11:0] background_color = (state == 4'b0000) ? 12'h000 :
         (state == 4'b0001) ? 12'hEED :
         (state == 4'b0010) ? 12'hEEC :
@@ -31,15 +40,15 @@ module block_vga_module (
     font_rom font_rom_1(
         .clk(clk),
         .number(current_individual_number),
-        .v_cnt(v_cnt - 12'd60),
+        .v_cnt(v_cnt - v_letter_start_offset),
         .output_row(vga_font_output)
     );
 
     // determine h_cnt_offset
     always @ (posedge clk) begin
-        if (h_cnt == 12'd42) begin
+        if (h_cnt == h_font_start_offset) begin
             h_cnt_offset <= 5'd0;
-        end else if (h_cnt > 12'd42 && h_cnt < 12'd106) begin
+        end else if (h_cnt > h_letter_start_offset && h_cnt < h_end_offset) begin
             if (h_cnt_offset == 5'b01111) h_cnt_offset <= 5'd0;
             else h_cnt_offset <= h_cnt_offset + 5'd1;
         end else begin
@@ -49,7 +58,7 @@ module block_vga_module (
 
     // determine current_individual_number
     always @ (posedge clk) begin
-        if (h_cnt >= 12'd41 && h_cnt < 12'd58) begin
+        if (h_cnt >= h_letter_first_offset && h_cnt < h_letter_second_offset) begin
             case (state)
                 4'b0001: current_individual_number <= 4'b0010;
                 4'b0010: current_individual_number <= 4'b0100;
@@ -65,7 +74,7 @@ module block_vga_module (
                 4'b1100: current_individual_number <= 4'b0101;
                 default: current_individual_number <= 4'b1111;
             endcase
-        end else if (h_cnt >= 12'd58 && h_cnt < 12'd74) begin
+        end else if (h_cnt >= h_letter_second_offset && h_cnt < h_letter_third_offset) begin
             case (state)
                 4'b0100: current_individual_number <= 4'd6;
                 4'b0101: current_individual_number <= 4'd2;
@@ -78,7 +87,7 @@ module block_vga_module (
                 4'b1100: current_individual_number <= 4'd0;
                 default: current_individual_number <= 4'b1111;
             endcase
-        end else if (h_cnt >= 12'd74 && h_cnt < 12'd90) begin
+        end else if (h_cnt >= h_letter_third_offset && h_cnt < h_letter_last_offset) begin
             case (state)
                 4'b0111: current_individual_number <= 4'd8;
                 4'b1000: current_individual_number <= 4'd6;
@@ -88,7 +97,7 @@ module block_vga_module (
                 4'b1100: current_individual_number <= 4'd9;
                 default: current_individual_number <= 4'b1111;
             endcase
-        end else if (h_cnt >= 12'd90 && h_cnt < 12'd106) begin
+        end else if (h_cnt >= h_letter_last_offset && h_cnt < h_end_offset) begin
             case (state)
                 4'b1010: current_individual_number <= 4'd4;
                 4'b1011: current_individual_number <= 4'd8;
@@ -104,7 +113,7 @@ module block_vga_module (
         if (!rst) begin
             vga_data <= 12'd0;
         end
-        else if (v_cnt >= 12'd60 && v_cnt < 12'd92) begin
+        else if (v_cnt >= v_letter_start_offset && v_cnt < v_letter_end_offset) begin
             vga_data <= vga_font_output[5'd15 - h_cnt_offset] == 1'b1 ? font_color : background_color;
         end else begin
             vga_data <= background_color;

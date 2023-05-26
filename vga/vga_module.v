@@ -35,6 +35,22 @@ module vga_module #(
 	localparam HSYNC_ACT = ~Hsync_pol;
 
 	/*****************************************************
+	** Offset Definition                                **
+	*****************************************************/
+
+	localparam block_size = 12'd150;
+
+	localparam h_first_block_offset = 12'd150;
+	localparam h_second_block_offset = 12'd330;
+	localparam h_third_block_offset = 12'd510;
+	localparam h_last_block_offset = 12'd690;
+
+	localparam v_first_block_offset = 12'd30;
+	localparam v_second_block_offset = 12'd210;
+	localparam v_third_block_offset = 12'd390;
+	localparam v_last_block_offset = 12'd570;
+
+	/*****************************************************
 	** Reg Definition                                  **
 	*****************************************************/
 	reg[3:0] pat_sel_buf ;
@@ -75,8 +91,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[63:60]),
-		.h_cnt(pat_hcnt - 12'd150),
-		.v_cnt(pat_vcnt - 12'd30),
+		.h_cnt(pat_hcnt - h_first_block_offset),
+		.v_cnt(pat_vcnt - v_first_block_offset),
 		.vga_data(vga_block_15)
 	);
 
@@ -84,8 +100,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[59:56]),
-		.h_cnt(pat_hcnt - 12'd330),
-		.v_cnt(pat_vcnt - 12'd30),
+		.h_cnt(pat_hcnt - h_second_block_offset),
+		.v_cnt(pat_vcnt - v_first_block_offset),
 		.vga_data(vga_block_14)
 	);
 
@@ -93,8 +109,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[55:52]),
-		.h_cnt(pat_hcnt - 12'd510),
-		.v_cnt(pat_vcnt - 12'd30),
+		.h_cnt(pat_hcnt - h_third_block_offset),
+		.v_cnt(pat_vcnt - v_first_block_offset),
 		.vga_data(vga_block_13)
 	);
 
@@ -102,8 +118,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[51:48]),
-		.h_cnt(pat_hcnt - 12'd690),
-		.v_cnt(pat_vcnt - 12'd30),
+		.h_cnt(pat_hcnt - h_last_block_offset),
+		.v_cnt(pat_vcnt - v_first_block_offset),
 		.vga_data(vga_block_12)
 	);
 
@@ -111,8 +127,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[47:44]),
-		.h_cnt(pat_hcnt - 12'd150),
-		.v_cnt(pat_vcnt - 12'd210),
+		.h_cnt(pat_hcnt - h_first_block_offset),
+		.v_cnt(pat_vcnt - v_second_block_offset),
 		.vga_data(vga_block_11)
 	);
 
@@ -120,8 +136,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[43:40]),
-		.h_cnt(pat_hcnt - 12'd330),
-		.v_cnt(pat_vcnt - 12'd210),
+		.h_cnt(pat_hcnt - h_second_block_offset),
+		.v_cnt(pat_vcnt - v_second_block_offset),
 		.vga_data(vga_block_10)
 	);
 
@@ -129,8 +145,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[39:36]),
-		.h_cnt(pat_hcnt - 12'd510),
-		.v_cnt(pat_vcnt - 12'd210),
+		.h_cnt(pat_hcnt - h_third_block_offset),
+		.v_cnt(pat_vcnt - v_second_block_offset),
 		.vga_data(vga_block_9)
 	);
 
@@ -138,8 +154,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[35:32]),
-		.h_cnt(pat_hcnt - 12'd690),
-		.v_cnt(pat_vcnt - 12'd210),
+		.h_cnt(pat_hcnt - h_last_block_offset),
+		.v_cnt(pat_vcnt - v_second_block_offset),
 		.vga_data(vga_block_8)
 	);
 
@@ -147,8 +163,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[31:28]),
-		.h_cnt(pat_hcnt - 12'd150),
-		.v_cnt(pat_vcnt - 12'd390),
+		.h_cnt(pat_hcnt - h_first_block_offset),
+		.v_cnt(pat_vcnt - v_third_block_offset),
 		.vga_data(vga_block_7)
 	);
 	
@@ -156,8 +172,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[27:24]),
-		.h_cnt(pat_hcnt - 12'd330),
-		.v_cnt(pat_vcnt - 12'd390),
+		.h_cnt(pat_hcnt - h_second_block_offset),
+		.v_cnt(pat_vcnt - v_third_block_offset),
 		.vga_data(vga_block_6)
 	);
 
@@ -165,8 +181,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[23:20]),
-		.h_cnt(pat_hcnt - 12'd510),
-		.v_cnt(pat_vcnt - 12'd390),
+		.h_cnt(pat_hcnt - h_third_block_offset),
+		.v_cnt(pat_vcnt - v_third_block_offset),
 		.vga_data(vga_block_5)
 	);
 
@@ -174,8 +190,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[19:16]),
-		.h_cnt(pat_hcnt - 12'd690),
-		.v_cnt(pat_vcnt - 12'd390),
+		.h_cnt(pat_hcnt - h_last_block_offset),
+		.v_cnt(pat_vcnt - v_third_block_offset),
 		.vga_data(vga_block_4)
 	);
 
@@ -183,8 +199,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[15:12]),
-		.h_cnt(pat_hcnt - 12'd150),
-		.v_cnt(pat_vcnt - 12'd570),
+		.h_cnt(pat_hcnt - h_first_block_offset),
+		.v_cnt(pat_vcnt - v_last_block_offset),
 		.vga_data(vga_block_3)
 	);
 
@@ -192,8 +208,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[11:8]),
-		.h_cnt(pat_hcnt - 12'd330),
-		.v_cnt(pat_vcnt - 12'd570),
+		.h_cnt(pat_hcnt - h_second_block_offset),
+		.v_cnt(pat_vcnt - v_last_block_offset),
 		.vga_data(vga_block_2)
 	);
 
@@ -201,8 +217,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[7:4]),
-		.h_cnt(pat_hcnt - 12'd510),
-		.v_cnt(pat_vcnt - 12'd570),
+		.h_cnt(pat_hcnt - h_third_block_offset),
+		.v_cnt(pat_vcnt - v_last_block_offset),
 		.vga_data(vga_block_1)
 	);
 
@@ -210,8 +226,8 @@ module vga_module #(
 		.clk(clk_65),
 		.rst(rst),
 		.state(current_state[3:0]),
-		.h_cnt(pat_hcnt - 12'd690),
-		.v_cnt(pat_vcnt - 12'd570),
+		.h_cnt(pat_hcnt - h_last_block_offset),
+		.v_cnt(pat_vcnt - v_last_block_offset),
 		.vga_data(vga_block_0)
 	);
 
@@ -315,20 +331,20 @@ module vga_module #(
 			vga_r <= 'd0;
 			vga_g <= 'd0;
 			vga_b <= 'd0;
-		end else if (pat_vcnt >= 30 && pat_vcnt < 180) begin
-			if (pat_hcnt >= 150 && pat_hcnt < 300) begin
+		end else if (pat_vcnt >= v_first_block_offset && pat_vcnt < v_first_block_offset + block_size) begin
+			if (pat_hcnt >= h_first_block_offset && pat_hcnt < h_first_block_offset + block_size) begin
 				vga_r <= vga_block_15[11:8];
 				vga_g <= vga_block_15[7:4];
 				vga_b <= vga_block_15[3:0];
-			end else if (pat_hcnt >= 330 && pat_hcnt < 480) begin
+			end else if (pat_hcnt >= h_second_block_offset && pat_hcnt < h_second_block_offset + block_size) begin
 				vga_r <= vga_block_14[11:8];
 				vga_g <= vga_block_14[7:4];
 				vga_b <= vga_block_14[3:0];
-			end else if (pat_hcnt >= 510 && pat_hcnt < 660) begin
+			end else if (pat_hcnt >= h_third_block_offset && pat_hcnt < h_third_block_offset + block_size) begin
 				vga_r <= vga_block_13[11:8];
 				vga_g <= vga_block_13[7:4];
 				vga_b <= vga_block_13[3:0];
-			end else if (pat_hcnt >= 690 && pat_hcnt < 840) begin
+			end else if (pat_hcnt >= h_last_block_offset && pat_hcnt < h_last_block_offset + block_size) begin
 				vga_r <= vga_block_12[11:8];
 				vga_g <= vga_block_12[7:4];
 				vga_b <= vga_block_12[3:0];
@@ -337,20 +353,20 @@ module vga_module #(
 				vga_g <= 'd0;
 				vga_b <= 'd0;
 			end
-		end else if (pat_vcnt >= 210 && pat_vcnt < 360) begin
-			if (pat_hcnt >= 150 && pat_hcnt < 300) begin
+		end else if (pat_vcnt >= v_second_block_offset && pat_vcnt < v_second_block_offset + block_size) begin
+			if (pat_hcnt >= h_first_block_offset && pat_hcnt < h_first_block_offset + block_size) begin
 				vga_r <= vga_block_11[11:8];
 				vga_g <= vga_block_11[7:4];
 				vga_b <= vga_block_11[3:0];
-			end else if (pat_hcnt >= 330 && pat_hcnt < 480) begin
+			end else if (pat_hcnt >= h_second_block_offset && pat_hcnt < h_second_block_offset + block_size) begin
 				vga_r <= vga_block_10[11:8];
 				vga_g <= vga_block_10[7:4];
 				vga_b <= vga_block_10[3:0];
-			end else if (pat_hcnt >= 510 && pat_hcnt < 660) begin
+			end else if (pat_hcnt >= h_third_block_offset && pat_hcnt < h_third_block_offset + block_size) begin
 				vga_r <= vga_block_9[11:8];
 				vga_g <= vga_block_9[7:4];
 				vga_b <= vga_block_9[3:0];
-			end else if (pat_hcnt >= 690 && pat_hcnt < 840) begin
+			end else if (pat_hcnt >= h_last_block_offset && pat_hcnt < h_last_block_offset + block_size) begin
 				vga_r <= vga_block_8[11:8];
 				vga_g <= vga_block_8[7:4];
 				vga_b <= vga_block_8[3:0];
@@ -359,20 +375,20 @@ module vga_module #(
 				vga_g <= 'd0;
 				vga_b <= 'd0;
 			end
-		end else if (pat_vcnt >= 390 && pat_vcnt < 540) begin
-			if (pat_hcnt >= 150 && pat_hcnt < 300) begin
+		end else if (pat_vcnt >= v_third_block_offset && pat_vcnt < v_third_block_offset + block_size) begin
+			if (pat_hcnt >= h_first_block_offset && pat_hcnt < h_first_block_offset + block_size) begin
 				vga_r <= vga_block_7[11:8];
 				vga_g <= vga_block_7[7:4];
 				vga_b <= vga_block_7[3:0];
-			end else if (pat_hcnt >= 330 && pat_hcnt < 480) begin
+			end else if (pat_hcnt >= h_second_block_offset && pat_hcnt < h_second_block_offset + block_size) begin
 				vga_r <= vga_block_6[11:8];
 				vga_g <= vga_block_6[7:4];
 				vga_b <= vga_block_6[3:0];
-			end else if (pat_hcnt >= 510 && pat_hcnt < 660) begin
+			end else if (pat_hcnt >= h_third_block_offset && pat_hcnt < h_third_block_offset + block_size) begin
 				vga_r <= vga_block_5[11:8];
 				vga_g <= vga_block_5[7:4];
 				vga_b <= vga_block_5[3:0];
-			end else if (pat_hcnt >= 690 && pat_hcnt < 840) begin
+			end else if (pat_hcnt >= h_last_block_offset + block_size && pat_hcnt < h_last_block_offset + block_size) begin
 				vga_r <= vga_block_4[11:8];
 				vga_g <= vga_block_4[7:4];
 				vga_b <= vga_block_4[3:0];
@@ -381,20 +397,20 @@ module vga_module #(
 				vga_g <= 'd0;
 				vga_b <= 'd0;
 			end
-		end else if (pat_vcnt >= 570 && pat_vcnt < 720) begin
-			if (pat_hcnt >= 150 && pat_hcnt < 300) begin
+		end else if (pat_vcnt >= v_last_block_offset && pat_vcnt < v_last_block_offset + block_size) begin
+			if (pat_hcnt >= h_first_block_offset && pat_hcnt < h_first_block_offset + block_size) begin
 				vga_r <= vga_block_3[11:8];
 				vga_g <= vga_block_3[7:4];
 				vga_b <= vga_block_3[3:0];
-			end else if (pat_hcnt >= 330 && pat_hcnt < 480) begin
+			end else if (pat_hcnt >= h_second_block_offset && pat_hcnt < h_second_block_offset + block_size) begin
 				vga_r <= vga_block_2[11:8];
 				vga_g <= vga_block_2[7:4];
 				vga_b <= vga_block_2[3:0];
-			end else if (pat_hcnt >= 510 && pat_hcnt < 660) begin
+			end else if (pat_hcnt >= h_third_block_offset && pat_hcnt < h_third_block_offset + block_size) begin
 				vga_r <= vga_block_1[11:8];
 				vga_g <= vga_block_1[7:4];
 				vga_b <= vga_block_1[3:0];
-			end else if (pat_hcnt >= 690 && pat_hcnt < 840) begin
+			end else if (pat_hcnt >= h_last_block_offset && pat_hcnt < h_last_block_offset + block_size) begin
 				vga_r <= vga_block_0[11:8];
 				vga_g <= vga_block_0[7:4];
 				vga_b <= vga_block_0[3:0];
