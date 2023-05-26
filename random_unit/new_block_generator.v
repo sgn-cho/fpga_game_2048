@@ -3,17 +3,19 @@ module new_block_generator(
     input wire rst,
     input wire[15:0] in,
     output wire done,
-    output reg[3:0] out
+    output reg[3:0] out,
+    output reg[4:0] out_preset
 );
 
     wire[31:0] num;
-    wire muxed_value;
+    wire muxed_value, two_or_four;
 
     xor_shift_sync random_number_generator(
         .clk(clk),
         .rst(rst),
         .seed(32'h392a4953),
-        .rand(num)
+        .rand(num),
+        .two_or_four(two_or_four)
     );
 
     parameter tmp_position = 16'h0001;
@@ -38,6 +40,7 @@ module new_block_generator(
             done <= 1'b1;
         end
         out <= num;
+        out_preset <= (two_or_four == 1'b1) ? 4'b0001 : 4'b0010;
     end
 
 endmodule
