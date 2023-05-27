@@ -46,9 +46,9 @@ module block_vga_module (
 
     // determine h_cnt_offset
     always @ (posedge clk) begin
-        if (h_cnt == h_font_start_offset) begin
+        if (h_cnt == h_letter_first_offset) begin
             h_cnt_offset <= 5'd0;
-        end else if (h_cnt > h_letter_start_offset && h_cnt < h_end_offset) begin
+        end else if (h_cnt > h_letter_first_offset && h_cnt < h_end_offset) begin
             if (h_cnt_offset == 5'b01111) h_cnt_offset <= 5'd0;
             else h_cnt_offset <= h_cnt_offset + 5'd1;
         end else begin

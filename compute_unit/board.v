@@ -7,7 +7,7 @@ module board (
     input wire[3:0] ready_from_global,
     output wire[63:0] total_current_state,
     output reg[3:0] board_done,
-    output wire movable,
+    output wire[1:0] movable,
     output wire[15:0] score
 );
 
@@ -33,112 +33,112 @@ module board (
     wire[3:0] node_15_en;
     wire[3:0] node_15_exist;
     wire[3:0] node_15_ready;
-    wire node_15_movable;
+    wire[1:0] node_15_movable;
     wire node_15_score;
 
     wire[3:0] node_14_value;
     wire[3:0] node_14_en;
     wire[3:0] node_14_exist;
     wire[3:0] node_14_ready;
-    wire node_14_movable;
+    wire[1:0] node_14_movable;
     wire node_14_score;
 
     wire[3:0] node_13_value;
     wire[3:0] node_13_en;
     wire[3:0] node_13_exist;
     wire[3:0] node_13_ready;
-    wire node_13_movable;
+    wire[1:0] node_13_movable;
     wire node_13_score;
 
     wire[3:0] node_12_value;
     wire[3:0] node_12_en;
     wire[3:0] node_12_exist;
     wire[3:0] node_12_ready;
-    wire node_12_movable;
+    wire[1:0] node_12_movable;
     wire node_12_score;
 
     wire[3:0] node_11_value;
     wire[3:0] node_11_en;
     wire[3:0] node_11_exist;
     wire[3:0] node_11_ready;
-    wire node_11_movable;
+    wire[1:0] node_11_movable;
     wire node_11_score;
 
     wire[3:0] node_10_value;
     wire[3:0] node_10_en;
     wire[3:0] node_10_exist;
     wire[3:0] node_10_ready;
-    wire node_10_movable;
+    wire[1:0] node_10_movable;
     wire node_10_score;
 
     wire[3:0] node_9_value;
     wire[3:0] node_9_en;
     wire[3:0] node_9_exist;
     wire[3:0] node_9_ready;
-    wire node_9_movable;
+    wire[1:0] node_9_movable;
     wire node_9_score;
 
     wire[3:0] node_8_value;
     wire[3:0] node_8_en;
     wire[3:0] node_8_exist;
     wire[3:0] node_8_ready;
-    wire node_8_movable;
+    wire[1:0] node_8_movable;
     wire node_8_score;
 
     wire[3:0] node_7_value;
     wire[3:0] node_7_en;
     wire[3:0] node_7_exist;
     wire[3:0] node_7_ready;
-    wire node_7_movable;
+    wire[1:0] node_7_movable;
     wire node_7_score;
 
     wire[3:0] node_6_value;
     wire[3:0] node_6_en;
     wire[3:0] node_6_exist;
     wire[3:0] node_6_ready;
-    wire node_6_movable;
+    wire[1:0] node_6_movable;
     wire node_6_score;
 
     wire[3:0] node_5_value;
     wire[3:0] node_5_en;
     wire[3:0] node_5_exist;
     wire[3:0] node_5_ready;
-    wire node_5_movable;
+    wire[1:0] node_5_movable;
     wire node_5_score;
 
     wire[3:0] node_4_value;
     wire[3:0] node_4_en;
     wire[3:0] node_4_exist;
     wire[3:0] node_4_ready;
-    wire node_4_movable;
+    wire[1:0] node_4_movable;
     wire node_4_score;
 
     wire[3:0] node_3_value;
     wire[3:0] node_3_en;
     wire[3:0] node_3_exist;
     wire[3:0] node_3_ready;
-    wire node_3_movable;
+    wire[1:0] node_3_movable;
     wire node_3_score;
 
     wire[3:0] node_2_value;
     wire[3:0] node_2_en;
     wire[3:0] node_2_exist;
     wire[3:0] node_2_ready;
-    wire node_2_movable;
+    wire[1:0] node_2_movable;
     wire node_2_score;
 
     wire[3:0] node_1_value;
     wire[3:0] node_1_en;
     wire[3:0] node_1_exist;
     wire[3:0] node_1_ready;
-    wire node_1_movable;
+    wire[1:0] node_1_movable;
     wire node_1_score;
 
     wire[3:0] node_0_value;
     wire[3:0] node_0_en;
     wire[3:0] node_0_exist;
     wire[3:0] node_0_ready;
-    wire node_0_movable;
+    wire[1:0] node_0_movable;
     wire node_0_score;
 
     assign score = {node_15_score, node_14_score, node_13_score, node_12_score,
@@ -150,6 +150,11 @@ module board (
         node_11_value, node_10_value, node_9_value, node_8_value,
         node_7_value, node_6_value, node_5_value, node_4_value,
         node_3_value, node_2_value, node_1_value, node_0_value};
+
+    assign movable = node_15_movable | node_14_movable | node_13_movable | node_12_movable |
+        node_11_movable | node_10_movable | node_9_movable | node_8_movable |
+        node_7_movable | node_6_movable | node_5_movable | node_4_movable |
+        node_3_movable | node_2_movable | node_1_movable | node_0_movable;
 
     reg[15:0] board_done_checker;
 

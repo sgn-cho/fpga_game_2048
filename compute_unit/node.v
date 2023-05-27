@@ -11,7 +11,7 @@ module node (
     output wire[3:0] en_to,
     output wire[3:0] ready_to,
     output wire[3:0] exist_to,
-    output wire movable,
+    output wire[1:0] movable,
     output reg score
 );
 
@@ -138,11 +138,10 @@ module node (
         else direction <= 4'b0000;
     end
 
-    // 움직일 수 있는지 결정
-    assign movable = (current_value == value_from[15:12]) ||
-        (current_value == value_from[11:8]) ||
-        (current_value == value_from[7:4]) ||
-        (current_value == value_from[3:0]) ||
-        (current_value == 4'h0);
+    // 움직일 수 있는지 결정 (상하, 좌우)
+    assign movable = {
+        (current_value == value_from[15:12]) || (current_value == value_from[11:8]) || (current_value == 4'h0),
+        (current_value == value_from[7:4]) || (current_value == value_from[3:0]) ||(current_value == 4'h0)
+    };
     
 endmodule

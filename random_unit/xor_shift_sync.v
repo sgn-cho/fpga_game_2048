@@ -3,7 +3,7 @@ module xor_shift_sync (
     input wire rst,
     input wire[31:0] seed,
     output wire[3:0] rand,
-    output wire two_or_four
+    output reg two_or_four
 );
 
     reg[31:0] raw_rand;
