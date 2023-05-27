@@ -2,16 +2,17 @@ module controller (
     input wire clk,
     input wire rst,
     input wire[3:0] button_press,
-    output reg[15:0] score
+    output reg[19:0] score
 );
 
     parameter idle = 0, init_1 = 1, pend_init = 2, init_2 = 3, wait_press = 4, pending = 5, check = 6, ended = 7;
 
     reg[2:0] state, next_state;
     reg preset, rnd_num;
-    wire generate_done, movable;
+    wire generate_done, movable, out_preset;
     wire[3:0] board_done;
     wire[63:0] total_current_state;
+    wire[15:0] score_signal;
 
     reg[3:0] sended_direction, preset_location, preset_value;
 
@@ -22,7 +23,8 @@ module controller (
         .preset_location(preset_location),
         .total_current_state(total_current_state)
         .board_done(board_done),
-        .movable(movable)
+        .movable(movable),
+        .score(score_signal)
     );
 
     new_block_generator random_number(
@@ -30,37 +32,17 @@ module controller (
         .rst(rst),
         .in(),
         .done(done),
-        .out(rnd_num)
+        .out(rnd_num),
+        .out_preset(out_preset)
     );
 
-    reg[63:0] score_queue;
-    reg[31:0] score_queue_2;
-
-    always @ (posedge clk) begin
-        score_queue <= {score[15] == 1'b1 ? total_current_state[63:60] : 4'h0,
-            score[14] == 1'b1 ? total_current_state[59:56] : 4'h0,
-            score[13] == 1'b1 ? total_current_state[55:52] : 4'h0,
-            score[12] == 1'b1 ? total_current_state[51:48] : 4'h0,
-            score[11] == 1'b1 ? total_current_state[47:44] : 4'h0,
-            score[10] == 1'b1 ? total_current_state[43:40] : 4'h0,
-            score[9] == 1'b1 ? total_current_state[39:36] : 4'h0,
-            score[8] == 1'b1 ? total_current_state[35:32] : 4'h0,
-            score[7] == 1'b1 ? total_current_state[31:28] : 4'h0,
-            score[6] == 1'b1 ? total_current_state[27:24] : 4'h0,
-            score[5] == 1'b1 ? total_current_state[23:20] : 4'h0,
-            score[4] == 1'b1 ? total_current_state[19:16] : 4'h0,
-            score[3] == 1'b1 ? total_current_state[15:12] : 4'h0,
-            score[2] == 1'b1 ? total_current_state[11:8] : 4'h0,
-            score[1] == 1'b1 ? total_current_state[7:4] : 4'h0,
-            score[0] == 1'b1 ? total_current_state[3:0] : 4'h0 };
-
-        score_queue_2 <= { score[15] + score[14] + score[13] + score[12],
-            score[11] + score[10] + score[9] + score[8],
-            score[7] + score[6] + score[5] + score[4],
-            score[3] + score[2] + score[1] + score[0] };
-
-        score <= score_queue_2[31:24] + score_queue_2[23:16] + score_queue_2[15:8] + score_queue_2[7:0];
-    end
+    scorer score_module(
+        .clk(clk),
+        .rst(rst),
+        .total_current_state(total_current_state),
+        .score_signal(score_signal),
+        .bcd_score(score)
+    );
 
     reg[3:0] ready_1, ready_2;
 
@@ -95,20 +77,21 @@ module controller (
         end
         else if (state == pend_init) next_state <= init_2;
         else if (state == init_2) begin
-            if (done == 1'b1) next_state <= wait_press;
+            if (done == 1'b1) next_state <= check;
+            else if (movable == 1'b0) next_state <= ended;
             else next_state <= init_2;
+        end
+        else if (state == check) begin
+            if (movable == 1'b1) next_state <= wait_press;
+            else next_state <= ended;
         end
         else if (state == wait_press) begin
             if (ready_from != 4'b0000) next_state <= pending;
             else next_state <= wait_press;
         end
         else if (state == pending) begin
-            if (sended_direction & board_done != 4'b0000) next_state <= check;
+            if (sended_direction & board_done != 4'b0000) next_state <= init_2;
             else next_state <= pending;
-        end
-        else if (state == check) begin
-            if (movable == 1'b1) next_state <= init_2;
-            else next_state <= ended;
         end
         else next_state <= next_state;
     end
@@ -137,7 +120,7 @@ module controller (
 
     // preset value
     always @ (posedge clk) begin
-        preset_value <= 4'b0001;
+        preset_value <= out_preset == 1'b1 ? 4'b0001 : 4'b0010;
     end
     
 endmodule

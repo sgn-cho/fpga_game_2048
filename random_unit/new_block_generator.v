@@ -4,7 +4,7 @@ module new_block_generator(
     input wire[15:0] in,
     output wire done,
     output reg[3:0] out,
-    output reg[4:0] out_preset
+    output reg out_preset
 );
 
     wire[31:0] num;
@@ -40,7 +40,7 @@ module new_block_generator(
             done <= 1'b1;
         end
         out <= num;
-        out_preset <= (two_or_four == 1'b1) ? 4'b0001 : 4'b0010;
+        out_preset <= two_or_four;
     end
 
 endmodule
