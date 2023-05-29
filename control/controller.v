@@ -3,15 +3,17 @@ module controller (
     input wire rst,
     input wire[3:0] button_press,
     output wire[63:0] total_current_state,
-    output wire[19:0] score
+    output wire[19:0] score,
+    output reg[2:0] state
 );
 
     parameter idle = 0, init_1 = 1, pend_init = 2, init_2 = 3, wait_press = 4, pending = 5, check = 6, ended = 7;
 
-    reg[2:0] state, next_state;
+    reg[2:0] next_state;
     wire[3:0] rnd_num;
     wire[1:0] movable;
-    wire generate_done, out_preset, preset_signal;
+    wire generate_done, out_preset;
+    wire preset_signal;
     wire[3:0] board_done;
     wire[15:0] score_signal;
 
@@ -19,18 +21,25 @@ module controller (
     wire[3:0] preset_location, preset_value;
 
     reg[3:0] ready_1, ready_2;
+    reg[31:0] counter;
 
     always @ (posedge clk) begin
-        ready_1 <= button_press;
-        ready_2 <= ready_1;
+        if (!rst) counter <= 32'd0;
+        else if (counter == 32'd650000) counter <= 32'd0;
+        else counter <= counter + 1;
     end
 
     reg[3:0] ready_from;
     always @ (posedge clk) begin
-        ready_from[3] <= (ready_1[3] != ready_2[3] && ready_1[3] == 1'b1 && movable[1]) ? 1'b1 : 1'b0;
-        ready_from[2] <= (ready_1[2] != ready_2[2] && ready_1[2] == 1'b1 && movable[0]) ? 1'b1 : 1'b0;
-        ready_from[1] <= (ready_1[1] != ready_2[1] && ready_1[1] == 1'b1 && movable[1]) ? 1'b1 : 1'b0;
-        ready_from[0] <= (ready_1[0] != ready_2[0] && ready_1[0] == 1'b1 && movable[0]) ? 1'b1 : 1'b0;
+        if (counter == 32'd650000) begin
+            ready_1 <= button_press;
+            ready_2 <= ready_1;
+        end else if (counter == 32'd0) begin
+            ready_from[3] <= (ready_1[3] != ready_2[3] && ready_1[3] == 1'b1 && movable[1]) ? 1'b1 : 1'b0;
+            ready_from[2] <= (ready_1[2] != ready_2[2] && ready_1[2] == 1'b1 && movable[0]) ? 1'b1 : 1'b0;
+            ready_from[1] <= (ready_1[1] != ready_2[1] && ready_1[1] == 1'b1 && movable[1]) ? 1'b1 : 1'b0;
+            ready_from[0] <= (ready_1[0] != ready_2[0] && ready_1[0] == 1'b1 && movable[0]) ? 1'b1 : 1'b0;
+        end else ready_from <= 4'd0;
     end
 
     board main_board(
@@ -88,19 +97,18 @@ module controller (
     end
 
     // next_state
-    always @ (posedge clk) begin
+    always @ (rst or state or movable or preset_signal or ready_from or board_done) begin
         if (rst == 1'b0) next_state <= idle;
         else if (state == idle) begin
-            if (rst == 1'b0) next_state <= init_1;
-            else next_state <= idle;
+            next_state <= init_1;
         end
         else if (state == init_1) begin
-            if (generate_done == 1'b1) next_state <= pend_init;
+            if (preset_signal == 1'b1) next_state <= pend_init;
             else next_state <= init_1;
         end
         else if (state == pend_init) next_state <= init_2;
         else if (state == init_2) begin
-            if (generate_done == 1'b1) next_state <= check;
+            if (preset_signal == 1'b1) next_state <= check;
             else if (movable == 2'b00) next_state <= ended;
             else next_state <= init_2;
         end
@@ -113,7 +121,8 @@ module controller (
             else next_state <= wait_press;
         end
         else if (state == pending) begin
-            if (sended_direction & board_done != 4'b0000) next_state <= init_2;
+            if (movable == 2'b00) next_state <= ended;
+            else if ((sended_direction & board_done) != 4'b0000) next_state <= init_2;
             else next_state <= pending;
         end
         else next_state <= next_state;
@@ -121,15 +130,18 @@ module controller (
 
     // sended direction
     always @ (posedge clk) begin
-        if (state == wait_press && ready_from != 4'b0000) begin
+        if (rst == 1'b0) begin
+            sended_direction <= 4'b0000;
+        end
+        if (ready_from != 4'b0000) begin
             sended_direction <= ready_from;
         end
         else if (state == init_2) sended_direction <= 4'b0000;
         else sended_direction <= sended_direction;
     end
     
-    assign preset_location = generate_done == 1'b1 ? rnd_num : 4'b0000;
-    assign preset_value = out_preset == 1'b1 ? 4'b0001: 4'b0010;
-    assign preset_signal = (state == init_1) || (state == init_2) || generate_done;
+    assign preset_signal = ((state == init_1) || (state == init_2)) && generate_done;
+    assign preset_location = (generate_done == 1'b1) ? rnd_num : 4'b0000;
+    assign preset_value = (out_preset == 1'b1) ? 4'b0001: 4'b0010;
 
 endmodule

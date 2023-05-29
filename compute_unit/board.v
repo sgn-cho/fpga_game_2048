@@ -180,10 +180,10 @@ module board (
             board_done[0] <= 1'b1;
         end
         else begin
-            board_done_checker[15:12] <= {node_15_ready, node_14_ready, node_13_ready, node_12_ready} | board_done_checker[15:12];
-            board_done_checker[11:8] <= {node_12_ready, node_8_ready, node_4_ready, node_0_ready} | board_done_checker[11:8];
-            board_done_checker[7:4] <= {node_3_ready, node_2_ready, node_1_ready, node_0_ready} | board_done_checker[7:4];
-            board_done_checker[3:0] <= {node_15_ready, node_11_ready, node_7_ready, node_3_ready} | board_done_checker[3:0];
+            board_done_checker[15:12] <= {node_15_ready[3], node_14_ready[3], node_13_ready[3], node_12_ready[3]} | board_done_checker[15:12];
+            board_done_checker[11:8] <= {node_12_ready[2], node_8_ready[2], node_4_ready[2], node_0_ready[2]} | board_done_checker[11:8];
+            board_done_checker[7:4] <= {node_3_ready[1], node_2_ready[1], node_1_ready[1], node_0_ready[1]} | board_done_checker[7:4];
+            board_done_checker[3:0] <= {node_15_ready[0], node_11_ready[0], node_7_ready[0], node_3_ready[0]} | board_done_checker[3:0];
             board_done <= 4'h0;
         end
     end

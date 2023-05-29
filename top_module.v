@@ -5,6 +5,7 @@ module top_module (
     output wire[3:0] value,
     output wire vga_vs,
     output wire vga_hs,
+    output wire[2:0] state,
     output wire[3:0] vga_r,
     output wire[3:0] vga_g,
     output wire[3:0] vga_b,
@@ -24,6 +25,7 @@ module top_module (
         .clk(clk_65),
         .rst(rst),
         .button_press(button_press),
+        .state(state),
         .total_current_state(current_state),
         .score(score_bcd)
     );

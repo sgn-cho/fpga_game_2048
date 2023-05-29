@@ -35,7 +35,7 @@ module new_block_generator(
         (num == 4'he) ? in[14] : in[15];
         
     always @ (posedge clk) begin
-        if (muxed_value) done <= 1'b1;
+        if (!muxed_value) done <= 1'b1;
         else done <= 1'b0;
         out <= num;
         out_preset <= two_or_four;

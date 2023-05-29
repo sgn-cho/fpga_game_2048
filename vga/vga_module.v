@@ -388,7 +388,7 @@ module vga_module #(
 				vga_r <= vga_block_5[11:8];
 				vga_g <= vga_block_5[7:4];
 				vga_b <= vga_block_5[3:0];
-			end else if (pat_hcnt >= h_last_block_offset + block_size && pat_hcnt < h_last_block_offset + block_size) begin
+			end else if (pat_hcnt >= h_last_block_offset && pat_hcnt < h_last_block_offset + block_size) begin
 				vga_r <= vga_block_4[11:8];
 				vga_g <= vga_block_4[7:4];
 				vga_b <= vga_block_4[3:0];

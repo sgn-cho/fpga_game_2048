@@ -11,9 +11,9 @@ module block_vga_module (
     parameter v_letter_end_offset = 12'd106;
 
     parameter h_letter_first_offset = 12'd41;
-    parameter h_letter_second_offset = 12'd58;
-    parameter h_letter_third_offset = 12'd74;
-    parameter h_letter_last_offset = 12'd90;
+    parameter h_letter_second_offset = 12'd57;
+    parameter h_letter_third_offset = 12'd73;
+    parameter h_letter_last_offset = 12'd89;
     parameter h_end_offset = 12'd106;
 
     wire[11:0] background_color = (state == 4'b0000) ? 12'h000 :
@@ -49,7 +49,7 @@ module block_vga_module (
         if (h_cnt == h_letter_first_offset) begin
             h_cnt_offset <= 5'd0;
         end else if (h_cnt > h_letter_first_offset && h_cnt < h_end_offset) begin
-            if (h_cnt_offset == 5'b01111) h_cnt_offset <= 5'd0;
+            if (h_cnt_offset == 5'd15) h_cnt_offset <= 5'd0;
             else h_cnt_offset <= h_cnt_offset + 5'd1;
         end else begin
             h_cnt_offset <= 5'd0;
