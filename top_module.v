@@ -10,7 +10,8 @@ module top_module (
     output wire[3:0] vga_g,
     output wire[3:0] vga_b,
     output wire[7:0] segment_digit,
-    output wire[6:0] segment_data
+    output wire[6:0] segment_data,
+    output wire buzz_signal
 );
 
     wire[19:0] score_bcd;
@@ -27,7 +28,8 @@ module top_module (
         .button_press(button_press),
         .state(state),
         .total_current_state(current_state),
-        .score(score_bcd)
+        .score(score_bcd),
+        .buzz_signal(buzz_signal)
     );
 
     vga_module top_vga(
@@ -42,7 +44,7 @@ module top_module (
     );
 
     bcd_controller bcd_controller_module(
-        .clk(clk),
+        .clk(clk_65), // simulation only
         .rst(rst),
         .bcd_score(score_bcd),
         .segment_digit(segment_digit),

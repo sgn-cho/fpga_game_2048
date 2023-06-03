@@ -41,3 +41,4 @@ set_property -dict {PACKAGE_PIN R18 IOSTANDARD LVCMOS33} [get_ports segment_data
 set_property -dict {PACKAGE_PIN W17 IOSTANDARD LVCMOS33} [get_ports segment_data[2]]
 set_property -dict {PACKAGE_PIN V17 IOSTANDARD LVCMOS33} [get_ports segment_data[1]]
 set_property -dict {PACKAGE_PIN U17 IOSTANDARD LVCMOS33} [get_ports segment_data[0]]
+set_property -dict {PACKAGE_PIN P20 IOSTANDARD LVCMOS33} [get_ports buzz_signal]

@@ -38,10 +38,11 @@ module bcd_controller(
     always @ (posedge clk) begin
         if (!rst) begin
             clk_cnt <= 17'd0;
-            seg_clk <= 0;
+            seg_clk <= 'b0;
         end else begin
             if (clk_cnt == 17'd64999) begin
                 seg_clk <= ~seg_clk;
+                clk_cnt <= 17'd0;
             end else begin
                 clk_cnt <= clk_cnt + 1;
             end
@@ -62,9 +63,9 @@ module bcd_controller(
         end else begin
             case (segment_digit)
                 8'b0001_0000: segment_data <= display[39:32];
-                8'b0000_1000: segment_data <= display[31:24];
-                8'b0000_0100: segment_data <= display[23:16];
-                8'b0000_0010: segment_data <= display[15:8];
+                8'b0010_0000: segment_data <= display[31:24];
+                8'b0100_0000: segment_data <= display[23:16];
+                8'b1000_0000: segment_data <= display[15:8];
                 8'b0000_0001: segment_data <= display[7:0];
                 default: segment_data <= 7'd0;
             endcase

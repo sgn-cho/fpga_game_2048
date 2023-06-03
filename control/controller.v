@@ -4,14 +4,15 @@ module controller (
     input wire[3:0] button_press,
     output wire[63:0] total_current_state,
     output wire[19:0] score,
-    output reg[2:0] state
+    output reg[2:0] state,
+    output wire buzz_signal
 );
 
     parameter idle = 0, init_1 = 1, pend_init = 2, init_2 = 3, wait_press = 4, pending = 5, check = 6, ended = 7;
 
     reg[2:0] next_state;
     wire[3:0] rnd_num;
-    wire[1:0] movable;
+    wire[3:0] movable;
     wire generate_done, out_preset;
     wire preset_signal;
     wire[3:0] board_done;
@@ -35,10 +36,10 @@ module controller (
             ready_1 <= button_press;
             ready_2 <= ready_1;
         end else if (counter == 32'd0) begin
-            ready_from[3] <= (ready_1[3] != ready_2[3] && ready_1[3] == 1'b1 && movable[1]) ? 1'b1 : 1'b0;
-            ready_from[2] <= (ready_1[2] != ready_2[2] && ready_1[2] == 1'b1 && movable[0]) ? 1'b1 : 1'b0;
-            ready_from[1] <= (ready_1[1] != ready_2[1] && ready_1[1] == 1'b1 && movable[1]) ? 1'b1 : 1'b0;
-            ready_from[0] <= (ready_1[0] != ready_2[0] && ready_1[0] == 1'b1 && movable[0]) ? 1'b1 : 1'b0;
+            ready_from[3] <= ((ready_1[3] != ready_2[3]) && (ready_1[3] == 1'b1) && movable[3]) ? 1'b1 : 1'b0;
+            ready_from[2] <= ((ready_1[2] != ready_2[2]) && (ready_1[2] == 1'b1) && movable[2]) ? 1'b1 : 1'b0;
+            ready_from[1] <= ((ready_1[1] != ready_2[1]) && (ready_1[1] == 1'b1) && movable[1]) ? 1'b1 : 1'b0;
+            ready_from[0] <= ((ready_1[0] != ready_2[0]) && (ready_1[0] == 1'b1) && movable[0]) ? 1'b1 : 1'b0;
         end else ready_from <= 4'd0;
     end
 
@@ -53,6 +54,14 @@ module controller (
         .board_done(board_done),
         .movable(movable),
         .score(score_signal)
+    );
+
+    buzzer buzzer_module(
+        .clk(clk),
+        .rst(rst),
+        .ready_from(ready_from),
+        .lose(state == 3'd7),
+        .buzz(buzz_signal)
     );
 
     wire[15:0] block_exist = {
@@ -109,11 +118,11 @@ module controller (
         else if (state == pend_init) next_state <= init_2;
         else if (state == init_2) begin
             if (preset_signal == 1'b1) next_state <= check;
-            else if (movable == 2'b00) next_state <= ended;
+            else if (movable == 4'b0000) next_state <= ended;
             else next_state <= init_2;
         end
         else if (state == check) begin
-            if (movable != 2'b00) next_state <= wait_press;
+            if (movable != 4'b0000) next_state <= wait_press;
             else next_state <= ended;
         end
         else if (state == wait_press) begin
@@ -121,7 +130,7 @@ module controller (
             else next_state <= wait_press;
         end
         else if (state == pending) begin
-            if (movable == 2'b00) next_state <= ended;
+            if (movable == 4'b0000) next_state <= ended;
             else if ((sended_direction & board_done) != 4'b0000) next_state <= init_2;
             else next_state <= pending;
         end

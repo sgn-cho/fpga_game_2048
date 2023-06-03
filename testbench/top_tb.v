@@ -34,6 +34,9 @@ module top_tb();
     initial begin
         #50 rst = 1'b1;
         #150 button_press = 4'b1000;
+        #20 button_press = 4'b0000;
+        #600 button_press = 4'b00001;
+        #20 button_press = 4'b0000;
     end
 
 endmodule

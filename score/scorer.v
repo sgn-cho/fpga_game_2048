@@ -48,6 +48,7 @@ module scorer (
 
     wire[20:0] bcd_score_module_output;
     double_dabble bcd_score_module(
+        .clk(clk),
         .bin(score_by_two),
         .bcd(bcd_score_module_output)
     );
@@ -64,7 +65,6 @@ module scorer (
 
     state_decoder_to_score score_14(
         .clk(clk),
-        .rst(rst),
         .en(score_signal[14]),
         .current_state(total_current_state[59:56]),
         .decoded_value(first_adder_wire[59:56])
