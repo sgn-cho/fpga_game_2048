@@ -3,7 +3,7 @@ module state_decoder_to_score (
     input wire rst,
     input wire en,
     input wire[3:0] current_state,
-    output reg[3:0] decoded_value
+    output reg[15:0] decoded_value
 );
 
     parameter tmp_bit = 16'b0000_0000_0000_0001;
@@ -11,7 +11,7 @@ module state_decoder_to_score (
     always @ (posedge clk) begin
         if (!rst) decoded_value <= 4'b0;
         else if (en) begin
-            decoded_value = (current_state == 4'd0) ? 4'b0 :
+            decoded_value <= (current_state == 4'd0) ? 4'b0 :
                 (current_state == 4'd1) ? tmp_bit << 1 :
                 (current_state == 4'd2) ? tmp_bit << 2 :
                 (current_state == 4'd3) ? tmp_bit << 3 :

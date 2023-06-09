@@ -141,9 +141,9 @@ module node (
     // 움직일 수 있는지 결정
     assign movable = {
         ((current_value != 4'd0) && (current_value == value_from[15:12])) || ((current_value == 4'd0) && (value_from[15:12] != 4'd0)),
-        ((current_value != 4'd0) && (current_value == value_from[3:0])) || ((current_value == 4'd0) && (value_from[3:0] != 4'd0)),
+        ((current_value != 4'd0) && (current_value == value_from[11:8])) || ((current_value == 4'd0) && (value_from[11:8] != 4'd0)),
         ((current_value != 4'd0) && (current_value == value_from[7:4])) || ((current_value == 4'd0) && (value_from[7:4] != 4'd0)),
-        ((current_value != 4'd0) && (current_value == value_from[11:8])) || ((current_value == 4'd0) && (value_from[11:8] != 4'd0))
+        ((current_value != 4'd0) && (current_value == value_from[3:0])) || ((current_value == 4'd0) && (value_from[3:0] != 4'd0))
     };
     
 endmodule
